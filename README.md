@@ -7,29 +7,58 @@
 <title>Eisen Mail — Alislamiah</title>
 <link rel="icon" href="icon.png" type="image/png">
 <style>
-:root{--bg:#06101f;--panel:#0c1b31;--panel2:#102541;--blue:#1769ff;--cyan:#39c6ff;--text:#f2f6ff;--muted:#a5b6d0;--border:#233a58;--green:#23c483;--red:#ff5d70}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:linear-gradient(145deg,#030914,#07172c 55%,#0b2140);color:var(--text);min-height:100vh}
-button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
-header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:#071326;position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold}.brand img{width:39px;height:39px;object-fit:contain;border-radius:10px}.brand span{color:var(--cyan)}
-#headerUser{font-size:12px;color:var(--muted);max-width:52%;overflow-wrap:anywhere}
-main{max-width:1050px;margin:22px auto;padding:0 13px 42px}.card{background:linear-gradient(145deg,#0d1e35,#0a1729);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:15px;box-shadow:0 10px 30px #0002}
-h1{font-size:25px}h2{font-size:20px}h3{font-size:16px}p{line-height:1.7;color:var(--muted)}
-label{display:block;margin:12px 0 7px;color:#dce9ff;font-size:14px}input,textarea{width:100%;padding:12px;background:#061326;border:1px solid #2b4567;border-radius:10px;color:white;outline:none}input:focus,textarea:focus{border-color:var(--cyan)}textarea{min-height:120px;resize:vertical}
-button,.btn{display:inline-block;border:0;padding:11px 14px;border-radius:10px;background:var(--blue);color:white;font-weight:bold;text-decoration:none;margin:5px 3px 0 0}
+:root{--bg:#06101f;--panel:#0c1b31;--panel2:#102541;--blue:#1769ff;--cyan:#39c6ff;--text:#f2f6ff;--muted:#a5b6d0;--border:#233a58;--green:#23c483;--red:#ff5d70;--gold:#f5c542}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(160deg,#030914 0%,#07172c 50%,#0b2140 100%);color:var(--text);min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 14px #0004}button:disabled{opacity:.5;cursor:not-allowed}
+header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border);background:rgba(7,19,38,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:-.3px}.brand img{width:40px;height:40px;object-fit:contain;border-radius:11px}.brand span{color:var(--cyan)}
+.header-right{display:flex;align-items:center;gap:12px}
+#headerUser{font-size:12px;color:var(--muted);max-width:180px;overflow-wrap:anywhere;text-align:left}
+.gemalot-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 14px;border-radius:12px;background:linear-gradient(135deg,#1a2a4a,#0f1c33);border:1px solid #3a5080;color:var(--text);text-decoration:none;min-width:88px;box-shadow:0 2px 10px #0003}
+.gemalot-btn:hover{border-color:var(--gold);box-shadow:0 4px 18px #f5c54233;transform:translateY(-1px)}
+.gemalot-btn .star{font-size:18px;line-height:1;filter:drop-shadow(0 0 6px #f5c54288)}
+.gemalot-btn .label{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.3px}
+main{max-width:1080px;margin:24px auto;padding:0 14px 48px}
+.card{background:linear-gradient(155deg,#0d1e35,#0a1729);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 12px 36px #0003}
+h1{font-size:26px;margin:0 0 8px;font-weight:700}h2{font-size:20px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}p{line-height:1.75;color:var(--muted)}
+label{display:block;margin:14px 0 6px;color:#dce9ff;font-size:13px;font-weight:500}
+input,textarea{width:100%;padding:13px 14px;background:#061326;border:1px solid #2b4567;border-radius:12px;color:white;outline:none;transition:border-color .2s}
+input:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #39c6ff22}
+textarea{min-height:130px;resize:vertical}
+button,.btn{display:inline-block;border:0;padding:11px 16px;border-radius:11px;background:var(--blue);color:white;font-weight:600;text-decoration:none;margin:5px 3px 0 0}
 .secondary{background:#1b304c;border:1px solid #35516f}.green{background:#087b58}.red{background:#a82d43}.full{width:100%;margin:12px 0 0}
-.hidden{display:none!important}.muted{color:var(--muted);font-size:13px}.notice{padding:12px;border-radius:10px;background:#102944;color:#dceeff;margin:12px 0;line-height:1.7}.error{background:#451b2a;color:#ffd8de}.success{background:#103b31;color:#bfffe8}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:15px}.tabs button{flex:1;min-width:110px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.plan{border:1px solid #2c5279;border-radius:14px;padding:15px;background:linear-gradient(145deg,#102745,#0b192d)}.plan .price{font-size:25px;font-weight:bold;color:var(--cyan);margin:10px 0}.plan .space{font-size:19px;font-weight:bold}.plan.active{border-color:var(--green)}
-.badge{display:inline-block;padding:5px 9px;border-radius:20px;background:#143e39;color:#aaffdf;font-size:12px}
+.hidden{display:none!important}.muted{color:var(--muted);font-size:13px}
+.notice{padding:13px 14px;border-radius:12px;background:#102944;color:#dceeff;margin:12px 0;line-height:1.7}.error{background:#451b2a;color:#ffd8de}.success{background:#103b31;color:#bfffe8}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.tabs button{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.plan{border:1px solid #2c5279;border-radius:16px;padding:18px;background:linear-gradient(155deg,#102745,#0b192d);transition:border-color .2s,transform .15s}
+.plan:hover{border-color:#4a7ab0}.plan .price{font-size:24px;font-weight:700;color:var(--cyan);margin:10px 0}.plan .space{font-size:18px;font-weight:700}.plan.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+.badge{display:inline-block;padding:5px 10px;border-radius:20px;background:#143e39;color:#aaffdf;font-size:12px;font-weight:600}
 .item{padding:14px 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}.item:last-child{border-bottom:0}.item strong{display:block;margin-bottom:6px}.item small{color:var(--muted)}.item p{white-space:pre-wrap;margin:9px 0}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:150px}.stat{background:#071529;border:1px solid var(--border);border-radius:12px;padding:13px}.stat strong{display:block;font-size:19px;color:var(--cyan);margin-bottom:6px}
-hr{border:0;border-top:1px solid var(--border);margin:18px 0}footer{text-align:center;color:#8195b1;padding:20px;font-size:12px}
-@media(min-width:760px){.layout{display:grid;grid-template-columns:205px 1fr;gap:15px}.side{align-self:start;position:sticky;top:83px}}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:150px}
+.stat{background:#071529;border:1px solid var(--border);border-radius:14px;padding:14px}.stat strong{display:block;font-size:20px;color:var(--cyan);margin-bottom:4px}
+hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+footer{text-align:center;color:#8195b1;padding:22px;font-size:12px}
+.plans-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#122840,#0c1c32);border:1px solid #2c5279;color:var(--text);font-weight:600;margin:8px 0 0}
+.plans-toggle:hover{border-color:var(--cyan)}
+.plans-toggle .chevron{font-size:14px;opacity:.8;transition:transform .25s}
+.plans-toggle.open .chevron{transform:rotate(180deg)}
+#plansPanel{margin-top:14px}
+@media(min-width:760px){.layout{display:grid;grid-template-columns:220px 1fr;gap:16px}.side{align-self:start;position:sticky;top:88px}}
+@media(max-width:520px){.gemalot-btn{padding:5px 10px;min-width:72px}#headerUser{max-width:100px;font-size:11px}}
 </style>
 </head>
 <body>
-<header><div class="brand"><img src="icon.png" alt="Eisen Mail" onerror="this.style.display='none'"><div>Eisen <span>Mail</span></div></div><div id="headerUser">البريد المستقل من Alislamiah</div></header>
+<header>
+  <div class="brand"><img src="icon.png" alt="Eisen Mail" onerror="this.style.display='none'"><div>Eisen <span>Mail</span></div></div>
+  <div class="header-right">
+    <div id="headerUser">البريد المستقل من Alislamiah</div>
+    <a class="gemalot-btn" href="https://mohamedmadoui5195.github.io/Gemalot/" target="_blank" rel="noopener" title="Ask Gemalot">
+      <span class="star">✦</span>
+      <span class="label">Ask Gemalot</span>
+    </a>
+  </div>
+</header>
 <main>
 <section id="authView">
  <div class="card">
@@ -49,7 +78,21 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}footer{text-align:c
    <section id="page-inbox" class="card"><h2>📥 صندوق الوارد</h2><div id="inboxList"></div></section>
    <section id="page-sent" class="card hidden"><h2>📤 الرسائل المرسلة</h2><div id="sentList"></div></section>
    <section id="page-compose" class="card hidden"><h2>✉️ كتابة رسالة</h2><label for="toEmail">إلى (عنوان الحساب المحلي)</label><input id="toEmail" type="email" placeholder="عنوان المستلم"><label for="mailSubject">الموضوع</label><input id="mailSubject" maxlength="160" placeholder="موضوع الرسالة"><label for="mailBody">الرسالة</label><textarea id="mailBody" maxlength="50000" placeholder="اكتب رسالتك هنا..."></textarea><button onclick="sendMessage()">إرسال الرسالة</button><p class="muted">يصل البريد إلى حساب موجود في قاعدة بيانات هذا المتصفح فقط. لا يتم الإرسال عبر الإنترنت.</p></section>
-   <section id="page-plans" class="card hidden"><h2>💎 مساحة التخزين</h2><div class="row"><div class="stat"><strong id="usedSpace">0 MB</strong><span class="muted">المستخدم التقريبي</span></div><div class="stat"><strong id="totalSpace">100 MB</strong><span class="muted">المساحة الحالية</span></div></div><div id="userPlans" class="grid" style="margin-top:15px"></div><div class="notice">بعد استلام المبلغ، تفعّل الإدارة الباقة. الضغط على الدفع لا يفعّل الاشتراك تلقائيًا.</div></section>
+   <section id="page-plans" class="card hidden">
+    <h2>💎 مساحة التخزين</h2>
+    <div class="row">
+      <div class="stat"><strong id="usedSpace">0 MB</strong><span class="muted">المستخدم التقريبي</span></div>
+      <div class="stat"><strong id="totalSpace">100 MB</strong><span class="muted">المساحة الحالية</span></div>
+    </div>
+    <button type="button" class="plans-toggle" id="plansToggleBtn" onclick="togglePlansPanel()">
+      <span>عرض باقات التخزين</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div id="plansPanel" class="hidden">
+      <div id="userPlans" class="grid"></div>
+      <div class="notice">طلب الشراء عبر واتساب. الضغط على الدفع لا يفعّل الاشتراك تلقائيًا.</div>
+    </div>
+   </section>
    <section id="page-settings" class="card hidden"><h2>⚙️ الحساب</h2><div id="accountDetails"></div><hr><h3>النسخ الاحتياطي</h3><p>صدّر نسخة من الحسابات والرسائل المحفوظة محليًا. ملف النسخة يحتوي بيانات حساسة، فاحتفظ به بأمان.</p><button onclick="exportBackup()">تصدير نسخة احتياطية</button><label for="importFile">استيراد نسخة احتياطية JSON</label><input id="importFile" type="file" accept="application/json"><button class="secondary" onclick="importBackup()">استيراد النسخة</button></section>
    
   </div>
@@ -82,7 +125,8 @@ async function login(){const email=emailNorm($("loginEmail").value),pass=$("logi
 function enterApp(){$("authView").classList.add("hidden");$("appView").classList.remove("hidden");$("sidebar").classList.remove("hidden");$("headerUser").textContent=currentUser.email;$("welcomeName").textContent=currentUser.name;openPage("inbox");refreshQuota();}
 function logout(){currentUser=null;$("appView").classList.add("hidden");$("authView").classList.remove("hidden");$("headerUser").textContent="البريد المستقل من Alislamiah";$("loginPassword").value="";showAuth("login");}
 function hidePages(){document.querySelectorAll('[id^="page-"]').forEach(e=>e.classList.add("hidden"));}
-function openPage(p){if(!currentUser)return;currentPage=p;hidePages();$("page-"+p).classList.remove("hidden");if(p==="inbox"||p==="sent")renderMessages(p);if(p==="plans"){drawPlans("userPlans",true);refreshQuota();}if(p==="settings")renderAccount();}
+function openPage(p){if(!currentUser)return;currentPage=p;hidePages();$("page-"+p).classList.remove("hidden");if(p==="inbox"||p==="sent")renderMessages(p);if(p==="plans"){drawPlans("userPlans",true);refreshQuota();$("plansPanel").classList.add("hidden");$("plansToggleBtn").classList.remove("open");$("plansToggleBtn").querySelector("span").textContent="عرض باقات التخزين";}if(p==="settings")renderAccount();}
+function togglePlansPanel(){const panel=$("plansPanel"),btn=$("plansToggleBtn");const open=panel.classList.toggle("hidden")===false;btn.classList.toggle("open",open);btn.querySelector("span").textContent=open?"إخفاء الباقات":"عرض باقات التخزين";}
 async function renderMessages(which){const target=$(which==="inbox"?"inboxList":"sentList");try{let arr=(await getMessages()).filter(m=>which==="inbox"?m.to===currentUser.email:m.from===currentUser.email);arr.sort((a,b)=>b.date.localeCompare(a.date));if(!arr.length){target.innerHTML=`<div class="notice">${which==="inbox"?"لا توجد رسائل واردة.":"لا توجد رسائل مرسلة."}</div>`;return;}target.innerHTML=arr.map(m=>`<div class="item"><strong>${esc(m.subject||"(بدون موضوع)")}</strong><small>${which==="inbox"?"من: "+esc(m.from):"إلى: "+esc(m.to)} · ${esc(new Date(m.date).toLocaleString("ar"))}</small><p>${esc(m.body)}</p><div>${which==="inbox"?`<button class="secondary" onclick="replyTo(${JSON.stringify(m.from)},${JSON.stringify(m.subject||"")})">رد</button>`:""}<button class="red" onclick="deleteMessage(${m.id})">حذف</button></div></div>`).join("");}catch(e){target.innerHTML='<div class="notice error">تعذر تحميل الرسائل.</div>';}}
 async function sendMessage(){const to=emailNorm($("toEmail").value),subject=$("mailSubject").value.trim(),body=$("mailBody").value.trim();if(!to||!body)return alert("أدخل عنوان المستلم ونص الرسالة.");if(to===currentUser.email)return alert("لا يمكنك الإرسال إلى نفسك في هذه النسخة.");try{const recipient=await getUser(to);if(!recipient)return alert("الحساب المستلم غير موجود في قاعدة بيانات هذا المتصفح.");const all=await getMessages();const used=all.filter(m=>m.from===currentUser.email||m.to===currentUser.email).reduce((s,m)=>s+new Blob([m.subject||"",m.body||""]).size,0);if(used+new Blob([subject,body]).size>plan(currentUser.plan).bytes){alert("المساحة غير كافية. اختر باقة أكبر.");openPage("plans");return;}await request("messages","add",{from:currentUser.email,to,subject,body,date:new Date().toISOString()});$("toEmail").value="";$("mailSubject").value="";$("mailBody").value="";alert("تم حفظ الرسالة وإيصالها إلى صندوق وارد المستلم على هذا المتصفح.");refreshQuota();openPage("sent");}catch(e){alert("تعذر إرسال الرسالة: "+e.message);}}
 function replyTo(email,subject){openPage("compose");$("toEmail").value=email;$("mailSubject").value=subject.startsWith("Re:")?subject:"Re: "+subject;$("mailBody").focus();}
