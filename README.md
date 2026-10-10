@@ -22,6 +22,68 @@ button,input,textarea{font:inherit}
 button{cursor:pointer;transition:background .15s,transform .12s,opacity .15s}
 button:disabled{opacity:.5;cursor:not-allowed}
 
+/* ===== SPLASH / LOADING ===== */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:#0a0e1a;
+  background-image:
+    linear-gradient(rgba(20,40,70,.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,40,70,.18) 1px, transparent 1px);
+  background-size:40px 40px;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .55s ease,visibility .55s;
+}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash-inner{
+  position:relative;width:160px;height:160px;
+  display:flex;align-items:center;justify-content:center;
+}
+/* مربع أزرق يدور خلف الأيقونة */
+.splash-blob{
+  position:absolute;width:118px;height:118px;z-index:1;
+  border-radius:28px;
+  background:linear-gradient(135deg,#1769ff 0%,#2a9dff 50%,#4d7cff 100%);
+  opacity:0;
+  box-shadow:0 0 28px #1769ffaa,0 0 56px #39c6ff55;
+  animation:
+    blobAppear .3s ease 1.3s forwards,
+    blobSpin 1.8s linear 1.3s infinite;
+}
+@keyframes blobAppear{to{opacity:1}}
+@keyframes blobSpin{to{transform:rotate(360deg)}}
+.splash-icon{
+  width:88px;height:88px;border-radius:22px;object-fit:contain;
+  position:relative;z-index:2;
+  background:#fff;padding:5px;
+  box-shadow:0 10px 36px #0009,0 0 0 3px rgba(255,255,255,.2);
+  animation:iconFlip 1.3s cubic-bezier(.34,1.15,.64,1) forwards;
+}
+.splash-icon-fallback{
+  width:88px;height:88px;border-radius:22px;
+  background:linear-gradient(145deg,#1769ff,#39c6ff);
+  display:none;align-items:center;justify-content:center;
+  font-size:32px;font-weight:800;color:#fff;
+  position:relative;z-index:2;
+  box-shadow:0 10px 36px #0009;
+  animation:iconFlip 1.3s cubic-bezier(.34,1.15,.64,1) forwards;
+}
+@keyframes iconFlip{
+  0%{transform:translateY(-240px) rotate(-30deg) scale(.3);opacity:0}
+  30%{opacity:1}
+  48%{transform:translateY(20px) rotate(14deg) scale(1.1)}
+  62%{transform:translateY(-12px) rotate(-8deg) scale(.95)}
+  75%{transform:translateY(6px) rotate(4deg) scale(1.03)}
+  88%{transform:translateY(-3px) rotate(-1deg) scale(.99)}
+  100%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}
+}
+.splash-text{
+  position:absolute;bottom:-50px;left:50%;transform:translateX(-50%);
+  font-size:15px;font-weight:600;color:#9db8d8;white-space:nowrap;
+  letter-spacing:.4px;
+  opacity:0;animation:fadeText .4s ease 1.45s forwards;
+}
+@keyframes fadeText{to{opacity:1}}
+
 /* ===== HEADER ===== */
 header{
   height:var(--header-h);display:flex;align-items:center;justify-content:space-between;
@@ -132,6 +194,16 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
 </style>
 </head>
 <body>
+
+<!-- شاشة التحميل -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-blob"></div>
+    <img class="splash-icon" src="icon.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="splash-icon-fallback" style="display:none">E</div>
+    <div class="splash-text">Eisen Mail</div>
+  </div>
+</div>
 
 <header>
   <div class="brand">
@@ -562,6 +634,11 @@ async function importBackup(){
   }catch(e){
     $("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا وافتح الصفحة عبر HTTPS أو من بيئة محلية تدعم IndexedDB.</p></div>';
   }
+  // إخفاء شاشة التحميل بعد انتهاء الأنيميشن
+  setTimeout(()=>{
+    const splash = $("splash");
+    if(splash){ splash.classList.add("hide"); setTimeout(()=> splash.remove(), 600); }
+  }, 2800);
 })();
 </script>
 </body>
