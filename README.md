@@ -278,7 +278,7 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
     <!-- INBOX -->
     <div id="page-inbox" class="card">
       <h2>📥 صندوق الوارد</h2>
-      <p class="muted">الرسائل التي وتلك من حسابات أخرى.</p>
+      <p class="muted">الرسائل التي وصلتك من حسابات أخرى.</p>
       <div id="inboxList"></div>
     </div>
     <!-- SENT -->
@@ -386,6 +386,15 @@ let db = null, currentUser = null, currentPage = "inbox";
 let tempData = null;
 const $ = id => document.getElementById(id);
 
+// دالة مساعدة لإخفاء شاشة الترحيب فوراً وضمان عدم تعلقها
+function hideSplash(){
+  const splash = $("splash");
+  if(splash){
+    splash.classList.add("hide");
+    setTimeout(()=> splash.remove(), 600);
+  }
+}
+
 function openDB(){
   return new Promise((resolve,reject)=>{
     const r = indexedDB.open("EisenMailDB",1);
@@ -461,27 +470,27 @@ window.signup = async function(){
   const email = emailNorm($("signupEmail").value);
   const pass = $("signupPassword").value;
   const pass2 = $("signupPassword2").value;
-  if(!name || !email || !pass || !pass2) return message("يرجى ملء جميع الحقول.","error");
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return message("أدخل عنوان بريد صحيحًا.","error");
-  if(pass.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.","error");
-if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.","error");
+  if(!name || !email || !pass || !pass2) return message("يرجى ملء جميع الحقول.", "error");
+if(!/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email)) return message("أدخل عنوان بريد صحيحًا.", "error");
+if(pass.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", "error");
+if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.", "error");
 try{
 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
 await updateProfile(userCredential.user, { displayName: name });
 tempData = { name, email, password: pass };
 $("saveModal").classList.add("show");
-}catch(e){ message("تعذر إنشاء الحساب: "+e.message,"error"); }
+}catch(e){ message("تعذر إنشاء الحساب: "+e.message, "error"); }
 }
 window.login = async function(){
 const email = emailNorm($("loginEmail").value);
 const pass = $("loginPassword").value;
-if(!email || !pass) return message("أدخل البريد وكلمة المرور.","error");
+if(!email || !pass) return message("أدخل البريد وكلمة المرور.", "error");
 try{
 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
 const u = userCredential.user;
 tempData = { name: u.displayName || email.split('@')[0], email, password: pass };
 $("saveModal").classList.add("show");
-}catch(e){ message("البريد أو كلمة المرور غير صحيحة.","error"); }
+}catch(e){ message("البريد أو كلمة المرور غير صحيحة.", "error"); }
 }
 window.loginWithAlislamiah = function(){
 const currentUserRaw = localStorage.getItem("alislamiah_current_user");
@@ -538,6 +547,7 @@ $("authFooter").classList.add("hidden");
 $("headerUser").textContent = currentUser.email;
 openPage("inbox");
 refreshQuota();
+hideSplash();
 }
 window.logout = async function(){
 await signOut(auth);
@@ -655,20 +665,19 @@ $("accountDetails").innerHTML = <div class="item"><strong>الاسم</strong>${e
 }
 onAuthStateChanged(auth, async (user) => {
 try {
-await openDB();
+if(!db) await openDB();
 if(user){
 enterApp(user);
 }else{
 showAuth("login");
+hideSplash();
 }
 }catch(e){
 $("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا.</p></div>';
+hideSplash();
 }
 });
-setTimeout(()=>{
-const splash = $("splash");
-if(splash){ splash.classList.add("hide"); setTimeout(()=> splash.remove(), 600); }
-}, 2800);
+setTimeout(hideSplash, 3000);
 </script>
 </body>
 </html>
