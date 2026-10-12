@@ -386,7 +386,6 @@ let db = null, currentUser = null, currentPage = "inbox";
 let tempData = null;
 const $ = id => document.getElementById(id);
 
-// دالة مساعدة لإخفاء شاشة الترحيب فوراً وضمان عدم تعلقها
 function hideSplash(){
   const splash = $("splash");
   if(splash){
@@ -471,212 +470,246 @@ window.signup = async function(){
   const pass = $("signupPassword").value;
   const pass2 = $("signupPassword2").value;
   if(!name || !email || !pass || !pass2) return message("يرجى ملء جميع الحقول.", "error");
-if(!/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email)) return message("أدخل عنوان بريد صحيحًا.", "error");
-if(pass.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", "error");
-if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.", "error");
-try{
-const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-await updateProfile(userCredential.user, { displayName: name });
-tempData = { name, email, password: pass };
-$("saveModal").classList.add("show");
-}catch(e){ message("تعذر إنشاء الحساب: "+e.message, "error"); }
+  if(!/^[^\s@]+@  if(pass.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", "error");
+  if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.", "error");
+  try{
+    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(userCredential.user, { displayName: name });
+    tempData = { name, email, password: pass };
+    $("saveModal").classList.add("show");
+  }catch(e){ message("تعذر إنشاء الحساب: "+e.message, "error"); }
 }
+
 window.login = async function(){
-const email = emailNorm($("loginEmail").value);
-const pass = $("loginPassword").value;
-if(!email || !pass) return message("أدخل البريد وكلمة المرور.", "error");
-try{
-const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-const u = userCredential.user;
-tempData = { name: u.displayName || email.split('@')[0], email, password: pass };
-$("saveModal").classList.add("show");
-}catch(e){ message("البريد أو كلمة المرور غير صحيحة.", "error"); }
+  const email = emailNorm($("loginEmail").value);
+  const pass = $("loginPassword").value;
+  if(!email || !pass) return message("أدخل البريد وكلمة المرور.", "error");
+  try{
+    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+    const u = userCredential.user;
+    tempData = { name: u.displayName || email.split('@')[0], email, password: pass };
+    $("saveModal").classList.add("show");
+  }catch(e){ message("البريد أو كلمة المرور غير صحيحة.", "error"); }
 }
+
 window.loginWithAlislamiah = function(){
-const currentUserRaw = localStorage.getItem("alislamiah_current_user");
-if(currentUserRaw){
-try{
-const u = JSON.parse(currentUserRaw);
-message("تم تسجيل الدخول بحساب Alislamiah بنجاح", "success");
-setTimeout(() => location.reload(), 600);
-}catch(e){
-window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
+  const currentUserRaw = localStorage.getItem("alislamiah_current_user");
+  if(currentUserRaw){
+    try{
+      const u = JSON.parse(currentUserRaw);
+      message("تم تسجيل الدخول بحساب Alislamiah بنجاح", "success");
+      setTimeout(() => location.reload(), 600);
+    }catch(e){
+      window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
+    }
+  }else{
+    window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
+  }
 }
-}else{
-window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
-}
-}
+
 window.saveYes = function(){
-if(tempData){
-let saved = JSON.parse(localStorage.getItem("alislamiah_saved_passwords") || "[]");
-if(!saved.some(s => s.email === tempData.email)){
-saved.push({
-name: tempData.name,
-email: tempData.email,
-password: tempData.password,
-savedAt: new Date().toISOString()
-});
-localStorage.setItem("alislamiah_saved_passwords", JSON.stringify(saved));
+  if(tempData){
+    let saved = JSON.parse(localStorage.getItem("alislamiah_saved_passwords") || "[]");
+    if(!saved.some(s => s.email === tempData.email)){
+      saved.push({
+        name: tempData.name,
+        email: tempData.email,
+        password: tempData.password,
+        savedAt: new Date().toISOString()
+      });
+      localStorage.setItem("alislamiah_saved_passwords", JSON.stringify(saved));
+    }
+  }
+  $("saveModal").classList.remove("show");
+  location.reload();
 }
-}
-$("saveModal").classList.remove("show");
-location.reload();
-}
+
 window.saveNo = function(){
-$("saveModal").classList.remove("show");
-location.reload();
+  $("saveModal").classList.remove("show");
+  location.reload();
 }
+
 document.getElementById("saveYesBtn").addEventListener("click", window.saveYes);
 document.getElementById("saveNoBtn").addEventListener("click", window.saveNo);
+
 function enterApp(user){
-currentUser = {
-email: user.email,
-name: user.displayName || user.email.split('@')[0],
-plan: "free",
-createdAt: user.metadata.creationTime || new Date().toISOString()
-};
-localStorage.setItem("alislamiah_current_user", JSON.stringify({
-id: user.uid,
-name: currentUser.name,
-email: currentUser.email
-}));
-$("authView").classList.add("hidden");
-$("appView").classList.remove("hidden");
-$("bottomNav").classList.add("visible");
-$("authFooter").classList.add("hidden");
-$("headerUser").textContent = currentUser.email;
-openPage("inbox");
-refreshQuota();
-hideSplash();
+  currentUser = {
+    email: user.email,
+    name: user.displayName || user.email.split('@')[0],
+    plan: "free",
+    createdAt: user.metadata.creationTime || new Date().toISOString()
+  };
+  localStorage.setItem("alislamiah_current_user", JSON.stringify({
+    id: user.uid,
+    name: currentUser.name,
+    email: currentUser.email
+  }));
+  $("authView").classList.add("hidden");
+  $("appView").classList.remove("hidden");
+  $("bottomNav").classList.add("visible");
+  $("authFooter").classList.add("hidden");
+  $("headerUser").textContent = currentUser.email;
+  openPage("inbox");
+  refreshQuota();
+  hideSplash();
 }
+
 window.logout = async function(){
-await signOut(auth);
-localStorage.removeItem("alislamiah_current_user");
-currentUser = null;
-$("appView").classList.add("hidden");
-$("authView").classList.remove("hidden");
-$("bottomNav").classList.remove("visible");
-$("authFooter").classList.remove("hidden");
-$("headerUser").textContent = "البريد المستقل من Alislamiah";
-$("loginPassword").value = "";
-showAuth("login");
+  await signOut(auth);
+  localStorage.removeItem("alislamiah_current_user");
+  currentUser = null;
+  $("appView").classList.add("hidden");
+  $("authView").classList.remove("hidden");
+  $("bottomNav").classList.remove("visible");
+  $("authFooter").classList.remove("hidden");
+  $("headerUser").textContent = "البريد المستقل من Alislamiah";
+  $("loginPassword").value = "";
+  showAuth("login");
 }
+
 function hidePages(){
-document.querySelectorAll('[id^="page-"]').forEach(e => e.classList.add("hidden"));
+  document.querySelectorAll('[id^="page-"]').forEach(e => e.classList.add("hidden"));
 }
+
 window.setNavActive = function(page){
-document.querySelectorAll(".nav-btn").forEach(b => {
-b.classList.toggle("active", b.dataset.page === page);
-});
+  document.querySelectorAll(".nav-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.page === page);
+  });
 }
+
 window.openPage = function(p){
-if(!currentUser) return;
-currentPage = p;
-hidePages();
-$("page-"+p).classList.remove("hidden");
-setNavActive(p);
-if(p === "inbox" || p === "sent") renderMessages(p);
-if(p === "plans"){
-drawPlans("userPlans", true);
-refreshQuota();
-$("plansPanel").classList.add("hidden");
-$("plansToggleBtn").textContent = "عرض باقات التخزين ▼";
+  if(!currentUser) return;
+  currentPage = p;
+  hidePages();
+  $("page-"+p).classList.remove("hidden");
+  setNavActive(p);
+  if(p === "inbox" || p === "sent") renderMessages(p);
+  if(p === "plans"){
+    drawPlans("userPlans", true);
+    refreshQuota();
+    $("plansPanel").classList.add("hidden");
+    $("plansToggleBtn").textContent = "عرض باقات التخزين ▼";
+  }
+  if(p === "settings") renderAccount();
 }
-if(p === "settings") renderAccount();
-}
+
 window.togglePlansPanel = function(){
-const panel = $("plansPanel");
-const open = panel.classList.toggle("hidden") === false;
-$("plansToggleBtn").textContent = open ? "إخفاء الباقات ▲" : "عرض باقات التخزين ▼";
+  const panel = $("plansPanel");
+  const open = panel.classList.toggle("hidden") === false;
+  $("plansToggleBtn").textContent = open ? "إخفاء الباقات ▲" : "عرض باقات التخزين ▼";
 }
+
 async function renderMessages(which){
-const target = $(which === "inbox" ? "inboxList" : "sentList");
-try{
-let arr = (await getMessages()).filter(m =>
-which === "inbox" ? m.to === currentUser.email : m.from === currentUser.email
-);
-arr.sort((a,b) => b.date.localeCompare(a.date));
-if(!arr.length){
-target.innerHTML = <div class="notice">${which==="inbox"?"لا توجد رسائل واردة بعد.":"لا توجد رسائل مرسلة بعد."}</div>;
-return;
+  const target = $(which === "inbox" ? "inboxList" : "sentList");
+  try{
+    let arr = (await getMessages()).filter(m =>
+      which === "inbox" ? m.to === currentUser.email : m.from === currentUser.email
+    );
+    arr.sort((a,b) => b.date.localeCompare(a.date));
+    if(!arr.length){
+      target.innerHTML = `<div class="notice">${which === "inbox" ? "لا توجد رسائل واردة بعد." : "لا توجد رسائل مرسلة بعد."}</div>`;
+      return;
+    }
+    target.innerHTML = arr.map(m => `
+      <div class="item">
+        <strong>${esc(m.subject || "(بدون موضوع)")}</strong>
+        <small>${which === "inbox" ? "من: " + esc(m.from) : "إلى: " + esc(m.to)} · ${esc(new Date(m.date).toLocaleString("ar"))}</small>
+        <p>${esc(m.body)}</p>
+        <div>
+          ${which === "inbox" ? `<button class="secondary" onclick='replyTo(${JSON.stringify(m.from)},${JSON.stringify(m.subject || "")})'>رد</button>` : ""}
+          <button class="red" onclick="deleteMessage(${m.id})">حذف</button>
+        </div>
+      </div>
+    `).join("");
+  }catch(e){
+    target.innerHTML = '<div class="notice error">تعذر تحميل الرسائل.</div>';
+  }
 }
-target.innerHTML = arr.map(m => <div class="item"> <strong>${esc(m.subject || "(بدون موضوع)")}</strong> <small>${which==="inbox" ? "من: "+esc(m.from) : "إلى: "+esc(m.to)} · ${esc(new Date(m.date).toLocaleString("ar"))}</small> <p>${esc(m.body)}</p> <div> ${which==="inbox" ?<button class="secondary" onclick='replyTo(${JSON.stringify(m.from)},${JSON.stringify(m.subject||"")})'>رد</button>: ""} <button class="red" onclick="deleteMessage(${m.id})">حذف</button> </div> </div>).join("");
-}catch(e){
-target.innerHTML = '<div class="notice error">تعذر تحميل الرسائل.</div>';
-}
-}
+
 window.sendMessage = async function(){
-const to = emailNorm($("toEmail").value);
-const subject = $("mailSubject").value.trim();
-const body = $("mailBody").value.trim();
-if(!to || !body) return alert("أدخل عنوان المستلم ونص الرسالة.");
-if(to === currentUser.email) return alert("لا يمكنك الإرسال إلى نفسك.");
-try{
-const all = await getMessages();
-const used = all
-.filter(m => m.from === currentUser.email || m.to === currentUser.email)
-.reduce((s,m) => s + new Blob([m.subject||"", m.body||""]).size, 0);
-if(used + new Blob([subject, body]).size > plan(currentUser.plan).bytes){
-alert("المساحة غير كافية. اختر باقة أكبر.");
-openPage("plans");
-return;
+  const to = emailNorm($("toEmail").value);
+  const subject = $("mailSubject").value.trim();
+  const body = $("mailBody").value.trim();
+  if(!to || !body) return alert("أدخل عنوان المستلم ونص الرسالة.");
+  if(to === currentUser.email) return alert("لا يمكنك الإرسال إلى نفسك.");
+  try{
+    const all = await getMessages();
+    const used = all
+      .filter(m => m.from === currentUser.email || m.to === currentUser.email)
+      .reduce((s,m) => s + new Blob([m.subject||"", m.body||""]).size, 0);
+    if(used + new Blob([subject, body]).size > plan(currentUser.plan).bytes){
+      alert("المساحة غير كافية. اختر باقة أكبر.");
+      openPage("plans");
+      return;
+    }
+    await request("messages","add",{
+      from: currentUser.email, to, subject, body, date: new Date().toISOString()
+    });
+    $("toEmail").value = "";
+    $("mailSubject").value = "";
+    $("mailBody").value = "";
+    alert("تم إرسال الرسالة بنجاح.");
+    refreshQuota();
+    openPage("sent");
+  }catch(e){ alert("تعذر إرسال الرسالة: " + e.message); }
 }
-await request("messages","add",{
-from: currentUser.email, to, subject, body, date: new Date().toISOString()
-});
-$("toEmail").value = "";
-$("mailSubject").value = "";
-$("mailBody").value = "";
-alert("تم إرسال الرسالة بنجاح.");
-refreshQuota();
-openPage("sent");
-}catch(e){ alert("تعذر إرسال الرسالة: " + e.message); }
-}
+
 window.replyTo = function(email, subject){
-openPage("compose");
-$("toEmail").value = email;
-$("mailSubject").value = subject.startsWith("Re:") ? subject : "Re: " + subject;
-$("mailBody").focus();
+  openPage("compose");
+  $("toEmail").value = email;
+  $("mailSubject").value = subject.startsWith("Re:") ? subject : "Re: " + subject;
+  $("mailBody").focus();
 }
+
 window.deleteMessage = async function(id){
-if(!confirm("حذف الرسالة؟")) return;
-await request("messages","delete", Number(id));
-renderMessages(currentPage);
-refreshQuota();
+  if(!confirm("حذف الرسالة؟")) return;
+  await request("messages","delete", Number(id));
+  renderMessages(currentPage);
+  refreshQuota();
 }
+
 async function refreshQuota(){
-if(!currentUser) return;
-const arr = await getMessages();
-const used = arr
-.filter(m => m.from === currentUser.email || m.to === currentUser.email)
-.reduce((s,m) => s + new Blob([m.subject||"", m.body||""]).size, 0);
-const p = plan(currentUser.plan);
-$("usedSpace").textContent = bytesText(used);
-$("totalSpace").textContent = p.label;
+  if(!currentUser) return;
+  const arr = await getMessages();
+  const used = arr
+    .filter(m => m.from === currentUser.email || m.to === currentUser.email)
+    .reduce((s,m) => s + new Blob([m.subject||"", m.body||""]).size, 0);
+  const p = plan(currentUser.plan);
+  $("usedSpace").textContent = bytesText(used);
+  $("totalSpace").textContent = p.label;
 }
+
 window.buyPlan = function(id){
-const p = plan(id);
-const msg = السلام عليكم، أريد شراء مساحة تخزين في Eisen Mail.\nالحساب: ${currentUser.email}\nالباقة: ${p.name}\nالمساحة: ${p.label}\nالسعر: ${p.priceLabel}\nأرجو إعلامي بطريقة الدفع.;
-window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener");
+  const p = plan(id);
+  const msg = `السلام عليكم، أريد شراء مساحة تخزين في Eisen Mail.\nالحساب: ${currentUser.email}\nالباقة: ${p.name}\nالمساحة: ${p.label}\nالسعر: ${p.priceLabel}\nأرجو إعلامي بطريقة الدفع.`;
+  window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank", "noopener");
 }
+
 function renderAccount(){
-const p = plan(currentUser.plan);
-$("accountDetails").innerHTML = <div class="item"><strong>الاسم</strong>${esc(currentUser.name)}</div> <div class="item"><strong>عنوان الحساب</strong>${esc(currentUser.email)}</div> <div class="item"><strong>الباقة</strong>${esc(p.name)} — ${esc(p.label)}</div> <div class="item"><strong>تاريخ الإنشاء</strong>${esc(new Date(currentUser.createdAt).toLocaleString("ar"))}</div>;
+  const p = plan(currentUser.plan);
+  $("accountDetails").innerHTML = `
+    <div class="item"><strong>الاسم</strong>${esc(currentUser.name)}</div>
+    <div class="item"><strong>عنوان الحساب</strong>${esc(currentUser.email)}</div>
+    <div class="item"><strong>الباقة</strong>${esc(p.name)} — ${esc(p.label)}</div>
+    <div class="item"><strong>تاريخ الإنشاء</strong>${esc(new Date(currentUser.createdAt).toLocaleString("ar"))}</div>
+  `;
 }
+
 onAuthStateChanged(auth, async (user) => {
-try {
-if(!db) await openDB();
-if(user){
-enterApp(user);
-}else{
-showAuth("login");
-hideSplash();
-}
-}catch(e){
-$("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا.</p></div>';
-hideSplash();
-}
+  try {
+    if(!db) await openDB();
+    if(user){
+      enterApp(user);
+    }else{
+      showAuth("login");
+      hideSplash();
+    }
+  }catch(e){
+    $("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا.</p></div>';
+    hideSplash();
+  }
 });
+
 setTimeout(hideSplash, 3000);
 </script>
 </body>
