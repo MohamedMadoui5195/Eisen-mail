@@ -627,6 +627,33 @@ async function importBackup(){
   }catch(e){ alert("تعذر الاستيراد: الملف غير صالح."); }
 }
 
+
+// ================== OutHub Bridge - لا يمس الشكل ==================
+window.EisenMailAPI = {
+  sendVerification: async function(toEmail, code, purpose){
+    try{
+      toEmail = String(toEmail||"").trim().toLowerCase();
+      if(!toEmail) return false;
+      if(!db) await openDB();
+      await request("messages","add",{
+        from: "no-reply@outhub.system",
+        to: toEmail,
+        subject: purpose==="reset" ? "رمز استعادة كلمة المرور - OutHub" : "رمز التحقق - OutHub",
+        body: "مرحبا،\n\nرمز التحقق الخاص بك في OutHub هو:\n\n"+code+"\n\nصالح لمدة 10 دقائق. لا تشاركه مع أحد.\n\n- OutHub",
+        date: new Date().toISOString()
+      });
+      if(currentUser && currentUser.email===toEmail){ renderMessages(currentPage); refreshQuota(); }
+      return true;
+    }catch(e){ return false; }
+  }
+};
+window.addEventListener("storage", async function(e){
+  if(e.key==="outhub_send_code_request" && e.newValue){
+    try{ const r=JSON.parse(e.newValue); if(r&&r.to&&r.code) await window.EisenMailAPI.sendVerification(r.to,r.code,r.purpose); }catch{}
+  }
+});
+
+
 (async ()=>{
   try{
     await openDB();
