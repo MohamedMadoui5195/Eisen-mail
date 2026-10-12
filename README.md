@@ -38,6 +38,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
   position:relative;width:160px;height:160px;
   display:flex;align-items:center;justify-content:center;
 }
+/* مربع أزرق يدور خلف الأيقونة */
 .splash-blob{
   position:absolute;width:118px;height:118px;z-index:1;
   border-radius:28px;
@@ -130,16 +131,6 @@ textarea{min-height:120px;resize:vertical}
   display:inline-block;border:0;padding:11px 15px;border-radius:11px;
   background:var(--blue);color:white;font-weight:600;text-decoration:none;margin:4px 2px 0 0;
 }
-.btn-alt{
-  width:100%;padding:11px 15px;border:1.5px solid rgba(255,255,255,.2);
-  border-radius:11px;background:transparent;color:white;font-weight:600;cursor:pointer;margin-top:10px;
-}
-.btn-alt:hover{background:rgba(255,255,255,.06)}
-.divider{margin:14px 0;color:#6b7280;font-size:13px;position:relative;text-align:center}
-.divider::before,.divider::after{content:"";position:absolute;top:50%;width:40%;height:1px;background:rgba(255,255,255,.12)}
-.divider::before{right:0}
-.divider::after{left:0}
-
 button.secondary,.secondary{background:#1b304c;border:1px solid #35516f}
 button.green,.green{background:#087b58}button.red,.red{background:#a82d43}
 .full{width:100%;margin-top:10px}
@@ -171,17 +162,6 @@ button.green,.green{background:#087b58}button.red,.red{background:#a82d43}
 .stat span{font-size:12px;color:var(--muted)}
 hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 
-/* Modal for saving password */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center;z-index:100}
-.modal-overlay.show{display:flex}
-.modal{background:#12182b;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:28px;width:90%;max-width:360px;text-align:center}
-.modal h3{margin-bottom:10px;font-size:18px}
-.modal p{color:#9fb8e0;font-size:14px;margin-bottom:22px;line-height:1.5}
-.modal-btns{display:flex;gap:12px}
-.modal-btns button{flex:1;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
-.btn-yes{background:linear-gradient(135deg,#facc15,#f97316);color:#111}
-.btn-no{background:rgba(255,255,255,.1);color:#ccc}
-
 /* ===== BOTTOM NAV ===== */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:30;
@@ -202,6 +182,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 .nav-btn:active{transform:scale(.94)}
 .nav-btn.danger{color:#ff8a9a}
 
+/* auth only footer space */
 #authView{padding-bottom:20px}
 footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
 
@@ -243,7 +224,7 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
   <section id="authView">
     <div class="card">
       <h1>مرحبًا بك في Eisen Mail</h1>
-      <p>بريد آمن ومستقل مدعوم بنظام حسابات فايربيز السحابي.</p>
+      <p>بريد محلي مستقل. الحسابات والرسائل تُحفظ على هذا المتصفح فقط.</p>
       <div class="tabs">
         <button type="button" id="tabLogin" class="active-tab" onclick="showAuth('login')">تسجيل الدخول</button>
         <button type="button" id="tabSignup" onclick="showAuth('signup')">إنشاء حساب</button>
@@ -254,19 +235,16 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
         <label for="loginPassword">كلمة المرور</label>
         <input id="loginPassword" type="password" autocomplete="current-password">
         <button class="full btn" onclick="login()">دخول إلى البريد</button>
-        
-        <div class="divider">أو</div>
-        <button class="btn-alt" onclick="loginWithAlislamiah()">Sign in with Alislamiah AI</button>
       </div>
       <div id="signupForm" class="hidden">
         <label for="signupName">الاسم</label>
         <input id="signupName" maxlength="60" placeholder="اسمك">
         <label for="signupEmail">عنوان البريد</label>
         <input id="signupEmail" type="email" placeholder="name@eisen.local" autocomplete="username">
-        <label for="signupPassword">كلمة المرور (6 أحرف على الأقل)</label>
-        <input id="signupPassword" type="password" minlength="6" autocomplete="new-password">
+        <label for="signupPassword">كلمة المرور (8 أحرف على الأقل)</label>
+        <input id="signupPassword" type="password" minlength="8" autocomplete="new-password">
         <label for="signupPassword2">تأكيد كلمة المرور</label>
-        <input id="signupPassword2" type="password" minlength="6" autocomplete="new-password">
+        <input id="signupPassword2" type="password" minlength="8" autocomplete="new-password">
         <button class="full btn" onclick="signup()">إنشاء الحساب</button>
       </div>
       <div id="authMessage" class="notice hidden" role="status"></div>
@@ -278,26 +256,29 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
     <!-- INBOX -->
     <div id="page-inbox" class="card">
       <h2>📥 صندوق الوارد</h2>
-      <p class="muted">الرسائل التي وصلتك من حسابات أخرى.</p>
+      <p class="muted">الرسائل التي وصلتك من حسابات أخرى على هذا المتصفح.</p>
       <div id="inboxList"></div>
     </div>
     <!-- SENT -->
     <div id="page-sent" class="card hidden">
       <h2>📤 الرسائل المرسلة</h2>
-      <p class="muted">الرسائل التي أرسلتها.</p>
+      <p class="muted">الرسائل التي أرسلتها إلى حسابات محلية أخرى.</p>
       <div id="sentList"></div>
     </div>
     <!-- COMPOSE -->
     <div id="page-compose" class="card hidden">
       <h2>✉️ رسالة جديدة</h2>
-      <p class="muted">أدخل عنوان حساب المستلم لإرسال رسالة فورية.</p>
-      <label for="toEmail">إلى (عنوان الحساب)</label>
+      <p class="muted">أدخل عنوان حساب موجود على هذا المتصفح. الرسالة تُحفظ محليًا وتظهر فورًا في وارد المستلم.</p>
+      <label for="toEmail">إلى (عنوان الحساب المحلي)</label>
       <input id="toEmail" type="email" placeholder="مثلاً: friend@eisen.local">
       <label for="mailSubject">الموضوع</label>
       <input id="mailSubject" maxlength="160" placeholder="موضوع الرسالة">
       <label for="mailBody">نص الرسالة</label>
       <textarea id="mailBody" maxlength="50000" placeholder="اكتب رسالتك هنا..."></textarea>
       <button class="full btn" onclick="sendMessage()">إرسال الرسالة</button>
+      <div class="notice" style="margin-top:12px">
+        الإرسال والاستقبال يعملان فقط بين الحسابات المحفوظة في <b>نفس المتصفح</b>. لا يوجد خادم خارجي.
+      </div>
     </div>
     <!-- PLANS -->
     <div id="page-plans" class="card hidden">
@@ -311,7 +292,7 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
       </button>
       <div id="plansPanel" class="hidden" style="margin-top:14px">
         <div id="userPlans" class="grid"></div>
-        <div class="notice">طلب الشراء عبر واتساب.</div>
+        <div class="notice">طلب الشراء عبر واتساب. الضغط على الدفع لا يفعّل الاشتراك تلقائيًا.</div>
       </div>
     </div>
     <!-- SETTINGS -->
@@ -319,24 +300,19 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
       <h2>⚙️ الحساب والنسخ</h2>
       <div id="accountDetails"></div>
       <hr>
+      <h3>النسخ الاحتياطي</h3>
+      <p>صدّر أو استورد الحسابات والرسائل المحفوظة محليًا.</p>
+      <button class="btn" onclick="exportBackup()">تصدير نسخة احتياطية</button>
+      <label for="importFile">استيراد ملف JSON</label>
+      <input id="importFile" type="file" accept="application/json">
+      <button class="secondary full" onclick="importBackup()">استيراد النسخة</button>
+      <hr>
       <button class="red full" onclick="logout()">تسجيل الخروج</button>
     </div>
   </section>
 </main>
 
-<!-- نافذة حفظ كلمة المرور في Alislamiah Password Manager -->
-<div class="modal-overlay" id="saveModal">
-  <div class="modal">
-    <h3>حفظ في Alislamiah Password Manager 🔑</h3>
-    <p>هل تريد حفظ هذه البيانات لتظهر في أداة كلمات المرور الخاصة بـ Alislamiah AI؟</p>
-    <div class="modal-btns">
-      <button class="btn-yes" id="saveYesBtn">نعم، احفظها</button>
-      <button class="btn-no" id="saveNoBtn">لا</button>
-    </div>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV (only when logged in) -->
 <nav class="bottom-nav" id="bottomNav">
   <button type="button" class="nav-btn active" data-page="inbox" onclick="openPage('inbox')">
     <span class="ico">📥</span><span>الوارد</span>
@@ -357,23 +333,8 @@ footer{text-align:center;color:#8195b1;padding:16px;font-size:11px}
 
 <footer id="authFooter">© Alislamiah — Eisen Mail</footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCNkJaxbQHkv9gntmt0tWdiVPMmjmWg-4g",
-  authDomain: "eisen-mail.firebaseapp.com",
-  projectId: "eisen-mail",
-  storageBucket: "eisen-mail.firebasestorage.app",
-  messagingSenderId: "857237566012",
-  appId: "1:857237566012:web:6cc98d71ae010cfb2ac939",
-  measurementId: "G-RFKFWM4B1Y"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
+<script>
+"use strict";
 const WHATSAPP_NUMBER = "213777543015";
 const PLANS = [
   {id:"free",name:"Eisen Free",bytes:100*1024*1024,label:"100 MB",price:0,priceLabel:"مجانًا"},
@@ -381,24 +342,15 @@ const PLANS = [
   {id:"pro",name:"Eisen Pro",bytes:5*1024**3,label:"5 Go",price:5,priceLabel:"5 دولارات"},
   {id:"max",name:"Eisen Max",bytes:7*1024**3,label:"7 Go",price:12,priceLabel:"12 دولارًا"}
 ];
-
 let db = null, currentUser = null, currentPage = "inbox";
-let tempData = null;
 const $ = id => document.getElementById(id);
-
-function hideSplash(){
-  const splash = $("splash");
-  if(splash){
-    splash.classList.add("hide");
-    setTimeout(()=> splash.remove(), 600);
-  }
-}
 
 function openDB(){
   return new Promise((resolve,reject)=>{
     const r = indexedDB.open("EisenMailDB",1);
     r.onupgradeneeded = e => {
       const d = e.target.result;
+      if(!d.objectStoreNames.contains("users")) d.createObjectStore("users",{keyPath:"email"});
       if(!d.objectStoreNames.contains("messages")){
         const s = d.createObjectStore("messages",{keyPath:"id",autoIncrement:true});
         s.createIndex("to","to"); s.createIndex("from","from");
@@ -424,6 +376,8 @@ function request(storeName, method, value){
   });
 }
 
+const getUser = email => request("users","get",email);
+const getUsers = () => request("users","getAll");
 const getMessages = () => request("messages","getAll");
 
 function esc(v){
@@ -444,7 +398,7 @@ function message(text, type=""){
   e.classList.remove("hidden");
 }
 
-window.showAuth = function(which){
+function showAuth(which){
   $("loginForm").classList.toggle("hidden", which !== "login");
   $("signupForm").classList.toggle("hidden", which !== "signup");
   $("tabLogin").classList.toggle("active-tab", which === "login");
@@ -452,7 +406,7 @@ window.showAuth = function(which){
   $("authMessage").classList.add("hidden");
 }
 
-window.drawPlans = function(id, interactive){
+function drawPlans(id, interactive){
   $(id).innerHTML = PLANS.map(p => `
     <div class="plan ${currentUser && currentUser.plan === p.id ? "active" : ""}">
       <h3>${esc(p.name)}</h3>
@@ -464,86 +418,39 @@ window.drawPlans = function(id, interactive){
   `).join("");
 }
 
-window.signup = async function(){
+async function signup(){
   const name = $("signupName").value.trim();
   const email = emailNorm($("signupEmail").value);
   const pass = $("signupPassword").value;
   const pass2 = $("signupPassword2").value;
-  if(!name || !email || !pass || !pass2) return message("يرجى ملء جميع الحقول.", "error");
-  if(!/^[^\s@]+@  if(pass.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", "error");
-  if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.", "error");
+  if(!name || !email || !pass || !pass2) return message("يرجى ملء جميع الحقول.","error");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return message("أدخل عنوان بريد صحيحًا.","error");
+  if(pass.length < 8) return message("كلمة المرور يجب أن تكون 8 أحرف على الأقل.","error");
+  if(pass !== pass2) return message("كلمتا المرور غير متطابقتين.","error");
   try{
-    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-    await updateProfile(userCredential.user, { displayName: name });
-    tempData = { name, email, password: pass };
-    $("saveModal").classList.add("show");
-  }catch(e){ message("تعذر إنشاء الحساب: "+e.message, "error"); }
+    if(await getUser(email)) return message("الحساب موجود بالفعل. سجّل الدخول.","error");
+    await request("users","add",{email,name,password:pass,plan:"free",createdAt:new Date().toISOString()});
+    $("loginEmail").value = email;
+    $("loginPassword").value = "";
+    showAuth("login");
+    message("تم إنشاء الحساب محليًا. يمكنك تسجيل الدخول.","success");
+  }catch(e){ message("تعذر إنشاء الحساب: "+e.message,"error"); }
 }
 
-window.login = async function(){
+async function login(){
   const email = emailNorm($("loginEmail").value);
   const pass = $("loginPassword").value;
-  if(!email || !pass) return message("أدخل البريد وكلمة المرور.", "error");
+  if(!email || !pass) return message("أدخل البريد وكلمة المرور.","error");
   try{
-    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-    const u = userCredential.user;
-    tempData = { name: u.displayName || email.split('@')[0], email, password: pass };
-    $("saveModal").classList.add("show");
-  }catch(e){ message("البريد أو كلمة المرور غير صحيحة.", "error"); }
+    const u = await getUser(email);
+    if(!u) return message("الحساب غير موجود. أنشئ حسابًا جديدًا.","error");
+    if(u.password !== pass) return message("كلمة المرور غير صحيحة.","error");
+    currentUser = u;
+    enterApp();
+  }catch(e){ message("تعذر تسجيل الدخول.","error"); }
 }
 
-window.loginWithAlislamiah = function(){
-  const currentUserRaw = localStorage.getItem("alislamiah_current_user");
-  if(currentUserRaw){
-    try{
-      const u = JSON.parse(currentUserRaw);
-      message("تم تسجيل الدخول بحساب Alislamiah بنجاح", "success");
-      setTimeout(() => location.reload(), 600);
-    }catch(e){
-      window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
-    }
-  }else{
-    window.location.href = "https://mohamedmadoui5195.github.io/Alislamia-AI/signin.html";
-  }
-}
-
-window.saveYes = function(){
-  if(tempData){
-    let saved = JSON.parse(localStorage.getItem("alislamiah_saved_passwords") || "[]");
-    if(!saved.some(s => s.email === tempData.email)){
-      saved.push({
-        name: tempData.name,
-        email: tempData.email,
-        password: tempData.password,
-        savedAt: new Date().toISOString()
-      });
-      localStorage.setItem("alislamiah_saved_passwords", JSON.stringify(saved));
-    }
-  }
-  $("saveModal").classList.remove("show");
-  location.reload();
-}
-
-window.saveNo = function(){
-  $("saveModal").classList.remove("show");
-  location.reload();
-}
-
-document.getElementById("saveYesBtn").addEventListener("click", window.saveYes);
-document.getElementById("saveNoBtn").addEventListener("click", window.saveNo);
-
-function enterApp(user){
-  currentUser = {
-    email: user.email,
-    name: user.displayName || user.email.split('@')[0],
-    plan: "free",
-    createdAt: user.metadata.creationTime || new Date().toISOString()
-  };
-  localStorage.setItem("alislamiah_current_user", JSON.stringify({
-    id: user.uid,
-    name: currentUser.name,
-    email: currentUser.email
-  }));
+function enterApp(){
   $("authView").classList.add("hidden");
   $("appView").classList.remove("hidden");
   $("bottomNav").classList.add("visible");
@@ -551,12 +458,9 @@ function enterApp(user){
   $("headerUser").textContent = currentUser.email;
   openPage("inbox");
   refreshQuota();
-  hideSplash();
 }
 
-window.logout = async function(){
-  await signOut(auth);
-  localStorage.removeItem("alislamiah_current_user");
+function logout(){
   currentUser = null;
   $("appView").classList.add("hidden");
   $("authView").classList.remove("hidden");
@@ -571,13 +475,13 @@ function hidePages(){
   document.querySelectorAll('[id^="page-"]').forEach(e => e.classList.add("hidden"));
 }
 
-window.setNavActive = function(page){
+function setNavActive(page){
   document.querySelectorAll(".nav-btn").forEach(b => {
     b.classList.toggle("active", b.dataset.page === page);
   });
 }
 
-window.openPage = function(p){
+function openPage(p){
   if(!currentUser) return;
   currentPage = p;
   hidePages();
@@ -593,7 +497,7 @@ window.openPage = function(p){
   if(p === "settings") renderAccount();
 }
 
-window.togglePlansPanel = function(){
+function togglePlansPanel(){
   const panel = $("plansPanel");
   const open = panel.classList.toggle("hidden") === false;
   $("plansToggleBtn").textContent = open ? "إخفاء الباقات ▲" : "عرض باقات التخزين ▼";
@@ -607,16 +511,16 @@ async function renderMessages(which){
     );
     arr.sort((a,b) => b.date.localeCompare(a.date));
     if(!arr.length){
-      target.innerHTML = `<div class="notice">${which === "inbox" ? "لا توجد رسائل واردة بعد." : "لا توجد رسائل مرسلة بعد."}</div>`;
+      target.innerHTML = `<div class="notice">${which==="inbox"?"لا توجد رسائل واردة بعد.":"لا توجد رسائل مرسلة بعد."}</div>`;
       return;
     }
     target.innerHTML = arr.map(m => `
       <div class="item">
         <strong>${esc(m.subject || "(بدون موضوع)")}</strong>
-        <small>${which === "inbox" ? "من: " + esc(m.from) : "إلى: " + esc(m.to)} · ${esc(new Date(m.date).toLocaleString("ar"))}</small>
+        <small>${which==="inbox" ? "من: "+esc(m.from) : "إلى: "+esc(m.to)} · ${esc(new Date(m.date).toLocaleString("ar"))}</small>
         <p>${esc(m.body)}</p>
         <div>
-          ${which === "inbox" ? `<button class="secondary" onclick='replyTo(${JSON.stringify(m.from)},${JSON.stringify(m.subject || "")})'>رد</button>` : ""}
+          ${which==="inbox" ? `<button class="secondary" onclick='replyTo(${JSON.stringify(m.from)},${JSON.stringify(m.subject||"")})'>رد</button>` : ""}
           <button class="red" onclick="deleteMessage(${m.id})">حذف</button>
         </div>
       </div>
@@ -626,13 +530,15 @@ async function renderMessages(which){
   }
 }
 
-window.sendMessage = async function(){
+async function sendMessage(){
   const to = emailNorm($("toEmail").value);
   const subject = $("mailSubject").value.trim();
   const body = $("mailBody").value.trim();
   if(!to || !body) return alert("أدخل عنوان المستلم ونص الرسالة.");
   if(to === currentUser.email) return alert("لا يمكنك الإرسال إلى نفسك.");
   try{
+    const recipient = await getUser(to);
+    if(!recipient) return alert("الحساب المستلم غير موجود في هذا المتصفح.\nأنشئ حسابًا ثانيًا بنفس المتصفح ثم أرسل إليه.");
     const all = await getMessages();
     const used = all
       .filter(m => m.from === currentUser.email || m.to === currentUser.email)
@@ -648,20 +554,20 @@ window.sendMessage = async function(){
     $("toEmail").value = "";
     $("mailSubject").value = "";
     $("mailBody").value = "";
-    alert("تم إرسال الرسالة بنجاح.");
+    alert("تم إرسال الرسالة.\nستظهر في صندوق وارد المستلم فورًا (على نفس المتصفح).");
     refreshQuota();
     openPage("sent");
   }catch(e){ alert("تعذر إرسال الرسالة: " + e.message); }
 }
 
-window.replyTo = function(email, subject){
+function replyTo(email, subject){
   openPage("compose");
   $("toEmail").value = email;
   $("mailSubject").value = subject.startsWith("Re:") ? subject : "Re: " + subject;
   $("mailBody").focus();
 }
 
-window.deleteMessage = async function(id){
+async function deleteMessage(id){
   if(!confirm("حذف الرسالة؟")) return;
   await request("messages","delete", Number(id));
   renderMessages(currentPage);
@@ -679,10 +585,10 @@ async function refreshQuota(){
   $("totalSpace").textContent = p.label;
 }
 
-window.buyPlan = function(id){
+function buyPlan(id){
   const p = plan(id);
   const msg = `السلام عليكم، أريد شراء مساحة تخزين في Eisen Mail.\nالحساب: ${currentUser.email}\nالباقة: ${p.name}\nالمساحة: ${p.label}\nالسعر: ${p.priceLabel}\nأرجو إعلامي بطريقة الدفع.`;
-  window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank", "noopener");
+  window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener");
 }
 
 function renderAccount(){
@@ -695,22 +601,107 @@ function renderAccount(){
   `;
 }
 
-onAuthStateChanged(auth, async (user) => {
-  try {
-    if(!db) await openDB();
-    if(user){
-      enterApp(user);
-    }else{
-      showAuth("login");
-      hideSplash();
+async function exportBackup(){
+  const data = {app:"Eisen Mail",version:1,users:await getUsers(),messages:await getMessages()};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "eisen-mail-backup.json"; a.click();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+}
+
+async function importBackup(){
+  const f = $("importFile").files[0];
+  if(!f) return alert("اختر ملف JSON.");
+  if(!confirm("سيتم استيراد الحسابات والرسائل إلى هذا المتصفح. المتابعة؟")) return;
+  try{
+    const d = JSON.parse(await f.text());
+    if(d.app !== "Eisen Mail" || !Array.isArray(d.users) || !Array.isArray(d.messages)) throw Error("invalid");
+    for(const u of d.users) if(u.email) await request("users","put",u);
+    for(const m of d.messages){
+      if(m.id) await request("messages","put",m);
+      else await request("messages","add",m);
     }
-  }catch(e){
-    $("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا.</p></div>';
-    hideSplash();
+    alert("اكتمل الاستيراد.");
+    $("importFile").value = "";
+  }catch(e){ alert("تعذر الاستيراد: الملف غير صالح."); }
+}
+
+
+// ================== OutHub Bridge - لا يمس الشكل ==================
+window.EisenMailAPI = {
+  sendVerification: async function(toEmail, code, purpose){
+    try{
+      toEmail = String(toEmail||"").trim().toLowerCase();
+      if(!toEmail) return false;
+      if(!db) await openDB();
+      await request("messages","add",{
+        from: "no-reply@outhub.system",
+        to: toEmail,
+        subject: purpose==="reset" ? "رمز استعادة كلمة المرور - OutHub" : "رمز التحقق - OutHub",
+        body: "مرحبا،\n\nرمز التحقق الخاص بك في OutHub هو:\n\n"+code+"\n\nصالح لمدة 10 دقائق. لا تشاركه مع أحد.\n\n- OutHub",
+        date: new Date().toISOString()
+      });
+      if(currentUser && currentUser.email===toEmail){ renderMessages(currentPage); refreshQuota(); }
+      return true;
+    }catch(e){ return false; }
+  }
+};
+window.addEventListener("storage", async function(e){
+  if(e.key==="outhub_send_code_request" && e.newValue){
+    try{ const r=JSON.parse(e.newValue); if(r&&r.to&&r.code) await window.EisenMailAPI.sendVerification(r.to,r.code,r.purpose); }catch{}
   }
 });
 
-setTimeout(hideSplash, 3000);
+
+
+// ===== استقبال رمز OutHub - بسيط ومضمون =====
+(function(){
+  const KEY="outhub_send_code_request";
+  let lastAt=0;
+  async function check(){
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(!raw) return;
+      const d=JSON.parse(raw);
+      if(!d || !d.to || !d.code) return;
+      if(d.at && d.at<=lastAt) return;
+      lastAt=d.at||Date.now();
+      const email=String(d.to).toLowerCase();
+      if(!email) return;
+      if(!window.db) { try{ await openDB(); }catch{} }
+      if(window.db){
+        const req = window.db.transaction("messages","readwrite").objectStore("messages").add({
+          from:"no-reply@outhub.system",
+          to:email,
+          subject: d.purpose==="reset"?"رمز استعادة - OutHub":"رمز التحقق - OutHub",
+          body:"رمز التحقق الخاص بك في OutHub هو:\n\n"+d.code+"\n\nصالح لمدة 10 دقائق.",
+          date:new Date().toISOString()
+        });
+      }
+      if(currentUser && currentUser.email===email){
+        setTimeout(()=>{ try{ renderMessages(currentPage); refreshQuota(); }catch{} }, 500);
+      }
+    }catch(e){}
+  }
+  setInterval(check, 1000);
+  window.addEventListener("storage", (e)=>{ if(e.key===KEY) check(); });
+  setTimeout(check, 800);
+})();
+
+(async ()=>{
+  try{
+    await openDB();
+    showAuth("login");
+  }catch(e){
+    $("authView").innerHTML = '<div class="card"><h2>تعذر فتح قاعدة البيانات</h2><p>استخدم متصفحًا حديثًا وافتح الصفحة عبر HTTPS أو من بيئة محلية تدعم IndexedDB.</p></div>';
+  }
+  // إخفاء شاشة التحميل بعد انتهاء الأنيميشن
+  setTimeout(()=>{
+    const splash = $("splash");
+    if(splash){ splash.classList.add("hide"); setTimeout(()=> splash.remove(), 600); }
+  }, 2800);
+})();
 </script>
 </body>
 </html>
