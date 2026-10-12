@@ -655,59 +655,39 @@ window.addEventListener("storage", async function(e){
 
 
 
-// ===== Robust OutHub Receiver - يفحص كل ثانيتين + عند التحميل =====
-async function checkOutHubCode(){
-  try{
-    const raw = localStorage.getItem("outhub_send_code_request");
-    if(!raw) return;
-    const data = JSON.parse(raw);
-    if(!data || !data.to || !data.code) return;
-    // تحقق أن الرسالة حديثة (آخر 5 دقائق) ولم تعالج من قبل
-    const lastProcessed = localStorage.getItem("outhub_last_processed_at");
-    if(lastProcessed && parseInt(lastProcessed) >= (data.at||0)) return;
-    // إذا المستخدم الحالي هو المستلم
-    const targetEmail = String(data.to||"").toLowerCase();
-    if(!targetEmail) return;
-    // احفظ في IndexedDB حتى لو المستخدم الحالي ليس المستهدف (لأن الرسالة يجب أن تظهر للمستهدف عند تسجيله)
-    if(!db) await openDB();
-    // تحقق هل الرسالة موجودة مسبقا لنفس الإيميل ونفس الكود لتجنب التكرار
-    const all = await request("messages","getAll");
-    const exists = all.some(m=> m.to===targetEmail && m.body && m.body.includes(data.code));
-    if(!exists){
-      await request("messages","add",{
-        from:"no-reply@outhub.system",
-        to:targetEmail,
-        subject: (data.purpose==="reset"?"رمز استعادة كلمة المرور - OutHub":"رمز التحقق - OutHub"),
-        body:"مرحبا،\n\nرمز التحقق الخاص بك في OutHub هو:\n\n"+data.code+"\n\nصالح لمدة 10 دقائق. لا تشاركه مع أحد.\n\n- OutHub",
-        date:new Date().toISOString()
-      });
-      console.log("✅ تم استقبال رمز من OutHub لـ", targetEmail);
-    }
-    localStorage.setItem("outhub_last_processed_at", String(data.at||Date.now()));
-    if(currentUser && currentUser.email===targetEmail){
-      renderMessages(currentPage);
-      refreshQuota();
-      // إظهار تنبيه
-      try{ showToast("وصل رمز جديد من OutHub: "+data.code); }catch{}
-    }
-  }catch(e){ console.error("checkOutHubCode", e); }
-}
-// فحص عند التحميل
-setTimeout(checkOutHubCode, 500);
-// فحص كل ثانيتين
-setInterval(checkOutHubCode, 2000);
-// فحص عند التركيز على النافذة
-window.addEventListener("focus", checkOutHubCode);
-window.addEventListener("storage", function(e){
-  if(e.key==="outhub_send_code_request") setTimeout(checkOutHubCode, 300);
-});
-
-function showToast(msg){
-  let t=document.getElementById("eisenToast");
-  if(!t){ t=document.createElement("div"); t.id="eisenToast"; t.style.cssText="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0c1022;border:1px solid rgba(52,120,246,.4);color:#cfe1ff;padding:10px 14px;border-radius:12px;z-index:9999;font-size:13px;"; document.body.appendChild(t); }
-  t.textContent=msg; t.style.display="block";
-  setTimeout(()=>{ t.style.display="none"; }, 4000);
-}
+// ===== استقبال رمز OutHub - بسيط ومضمون =====
+(function(){
+  const KEY="outhub_send_code_request";
+  let lastAt=0;
+  async function check(){
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(!raw) return;
+      const d=JSON.parse(raw);
+      if(!d || !d.to || !d.code) return;
+      if(d.at && d.at<=lastAt) return;
+      lastAt=d.at||Date.now();
+      const email=String(d.to).toLowerCase();
+      if(!email) return;
+      if(!window.db) { try{ await openDB(); }catch{} }
+      if(window.db){
+        const req = window.db.transaction("messages","readwrite").objectStore("messages").add({
+          from:"no-reply@outhub.system",
+          to:email,
+          subject: d.purpose==="reset"?"رمز استعادة - OutHub":"رمز التحقق - OutHub",
+          body:"رمز التحقق الخاص بك في OutHub هو:\n\n"+d.code+"\n\nصالح لمدة 10 دقائق.",
+          date:new Date().toISOString()
+        });
+      }
+      if(currentUser && currentUser.email===email){
+        setTimeout(()=>{ try{ renderMessages(currentPage); refreshQuota(); }catch{} }, 500);
+      }
+    }catch(e){}
+  }
+  setInterval(check, 1000);
+  window.addEventListener("storage", (e)=>{ if(e.key===KEY) check(); });
+  setTimeout(check, 800);
+})();
 
 (async ()=>{
   try{
